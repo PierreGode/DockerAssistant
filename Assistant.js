@@ -3,7 +3,7 @@ const readline = require('readline');
 const Docker = require('dockerode');
 
 const docker = new Docker();
-const apiKey = 'sk-proj-api'
+const apiKey = 'sk-proj-api';
 
 async function chatWithGPT(messages) {
   try {
@@ -23,7 +23,7 @@ async function chatWithGPT(messages) {
       }
     );
 
-    const completion = response.data.choices[0].message.cont>
+    const completion = response.data.choices[0].message.content;
     return completion.trim();
   } catch (error) {
     console.error('Error communicating with OpenAI:', error);
@@ -37,30 +37,28 @@ const rl = readline.createInterface({
 });
 
 const messages = [
-  { role: 'system', content: 'You are a helpful assistant sp>
+  { role: 'system', content: 'You are a helpful assistant' }
 ];
 
 async function getDockerContainers() {
   try {
-    const containers = await docker.listContainers({ all: fa>
+    const containers = await docker.listContainers({ all: false });
     if (containers.length === 0) {
       console.log('No running Docker containers found.');
       return;
     }
     for (const containerInfo of containers) {
-      const container = docker.getContainer(containerInfo.Id>
+      const container = docker.getContainer(containerInfo.Id);
       const containerDetails = await container.inspect();
-      messages.push({ role: 'user', content: `Please review >
+      messages.push({ role: 'user', content: `Please review the container details: ${JSON.stringify(containerDetails)}` });
       const response = await chatWithGPT(messages);
       console.log('ChatGPT:', response);
-      messages.push({ role: 'assistant', content: response }>
+      messages.push({ role: 'assistant', content: response });
     }
   } catch (error) {
-    console.error('Error fetching Docker containers:', error>
+    console.error('Error fetching Docker containers:', error);
   }
   process.exit(0); // Done
 }
 
-
 getDockerContainers(); // Start the conversation
-
