@@ -3,7 +3,7 @@ const readline = require('readline');
 const Docker = require('dockerode');
 
 const docker = new Docker();
-const apiKey = 'sk-proj-api>
+const apiKey = 'sk-proj-api'
 
 async function chatWithGPT(messages) {
   try {
